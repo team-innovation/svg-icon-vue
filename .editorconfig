@@ -1,0 +1,16 @@
+# top-most EditorConfig file
+root = true
+
+# Global rules, override on case-by-case basis
+[*]
+charset = utf-8
+indent_style = tab
+tab_width = 4
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Match auto-generated format of package.json
+[{package,package-lock}.json]
+indent_style = space
+indent_size = 2
