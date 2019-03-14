@@ -20,7 +20,7 @@ const baseConfig = {
 	plugins: [
 		// Optimize svg files
 		svgo(svgoOpts),
-		// Strip svg tag, only path is used
+		// Convert optimized svg to json with viewbox/paths
 		(_options => ({ // eslint-disable-line no-unused-vars
 			name: 'stripSVG',
 			transform(code, id) {

@@ -12,7 +12,13 @@ requireSVG.keys().forEach((fileName) => {
 	const svg = requireSVG(fileName);
 	const name = fileName.toLowerCase().replace(/^.*\/(.*).svg$/, '$1');
 	const decompressed = lz.decompressFromBase64(svg);
-	if (svg && decompressed) icons[name] = decompressed.replace(/\\"/g, '"'); // Remove escaping from quotes
+	if (svg && decompressed) {
+		const svgData = JSON.parse(decompressed);
+		icons[name] = {
+			viewBox: svgData.viewBox ? svgData.viewBox : '0 0 32 32', // Default viewbox
+			content: svgData.content.replace(/\\"/g, '"'), // Remove escaping from quotes
+		};
+	}
 });
 
 export default {
@@ -52,7 +58,7 @@ export default {
 	<svg xmlns="http://www.w3.org/2000/svg"
 		:width="width"
 		:height="height"
-		viewBox="0 0 32 32"
+		:viewBox="icons[name].viewBox"
 		:aria-labelledby="name"
 		role="presentation"
 		class="svg-icon"
@@ -64,7 +70,7 @@ export default {
 		<g
 			v-if="icons[name]"
 			:fill="color"
-			v-html="icons[name]"
+			v-html="icons[name].content"
 		/>
 		<g v-else :fill="color">
 			<slot />

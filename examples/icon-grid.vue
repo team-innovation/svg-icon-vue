@@ -8,7 +8,7 @@ export default {
 	data() {
 		return {
 			size: 100,
-			color: '#ff8200',
+			color: '#ffc107',
 			iconList: Object.keys(svgIcon.data().icons).sort(),
 		};
 	},

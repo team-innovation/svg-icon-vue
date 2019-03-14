@@ -30,7 +30,7 @@ module.exports = {
 			.loader('raw-loader')
 			.end()
 
-			// Unwrap SVG returned by svgo, only paths are required
+			// Unwrap SVG returned by svgo, convert to json with viewbox/paths
 			.use('strip-svg-loader')
 			.loader('strip-svg-loader')
 			.end()
