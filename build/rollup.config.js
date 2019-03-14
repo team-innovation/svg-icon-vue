@@ -68,10 +68,8 @@ if (!argv.format || argv.format === 'es') {
 			terser({
 				output: {
 					ecma: 6,
-					comments: (node, comment) => {
-						// Keep eslint disable comment at top
-						return (comment.value === ' eslint-disable ');
-					},
+					// Keep eslint disable comment at top
+					comments: (node, comment) => (comment.value === ' eslint-disable '),
 				},
 			}),
 		],

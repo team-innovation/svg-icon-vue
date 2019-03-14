@@ -15,7 +15,7 @@ requireSVG.keys().forEach((fileName) => {
 	if (svg && decompressed) {
 		const svgData = JSON.parse(decompressed);
 		icons[name] = {
-			viewBox: svgData.viewBox ? svgData.viewBox : '0 0 32 32', // Default viewbox
+			viewBox: svgData.viewBox,
 			content: svgData.content.replace(/\\"/g, '"'), // Remove escaping from quotes
 		};
 	}
@@ -50,6 +50,17 @@ export default {
 			if (Array.isArray(this.size)) return (this.size.length > 1) ? this.size[1] : this.size[0];
 			return this.size;
 		},
+		viewBox() {
+			// Return attrs viewbox if passed
+			if (this.$attrs.viewBox) return this.$attrs.viewBox;
+
+			// Return icon viewbox if found
+			const iconData = this.icons[this.name];
+			if (iconData && iconData.viewBox) return iconData.viewBox;
+
+			// If icons/attrs aren't found, return default
+			return '0 0 32 32';
+		},
 	},
 };
 </script>
@@ -58,7 +69,7 @@ export default {
 	<svg xmlns="http://www.w3.org/2000/svg"
 		:width="width"
 		:height="height"
-		:viewBox="icons[name].viewBox"
+		:viewBox="viewBox"
 		:aria-labelledby="name"
 		role="presentation"
 		class="svg-icon"
@@ -76,7 +87,6 @@ export default {
 			<slot />
 		</g>
 	</svg>
-
 </template>
 
 <style scoped>
