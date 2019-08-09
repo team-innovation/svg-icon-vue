@@ -1,5 +1,5 @@
 <script>
-import svgIcon from '../src/svg-icon.vue';
+import svgIcon, { iconList } from '../src/svg-icon.vue';
 
 export default {
 	components: {
@@ -9,7 +9,7 @@ export default {
 		return {
 			size: 100,
 			color: '#ffc107',
-			iconList: Object.keys(svgIcon.data().icons).sort(),
+			iconList,
 		};
 	},
 };

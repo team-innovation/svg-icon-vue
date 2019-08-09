@@ -1,5 +1,5 @@
 // Import vue component
-import component from './svg-icon.vue';
+import component, { iconList } from './svg-icon.vue';
 
 // install function executed by Vue.use()
 function install(Vue) {
@@ -14,7 +14,6 @@ const plugin = {
 };
 
 // To auto-install when vue is found
-/* global window global */
 let GlobalVue = null;
 if (typeof window !== 'undefined') {
 	GlobalVue = window.Vue;
@@ -34,4 +33,6 @@ export default component;
 
 // It's possible to expose named exports when writing components that can
 // also be used as directives, etc. - eg. import { RollupDemoDirective } from 'rollup-demo';
-// export const RollupDemoDirective = component;
+export {
+	iconList,
+};

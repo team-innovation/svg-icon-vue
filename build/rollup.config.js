@@ -1,4 +1,5 @@
 // rollup.config.js
+import path from 'path';
 import vue from 'rollup-plugin-vue';
 import buble from 'rollup-plugin-buble';
 import requireContext from 'rollup-plugin-require-context';
@@ -7,9 +8,10 @@ import resolve from 'rollup-plugin-node-resolve';
 import replace from 'rollup-plugin-replace';
 import { terser } from 'rollup-plugin-terser';
 import { string as rollupString } from 'rollup-plugin-string';
-import svgo from 'rollup-plugin-svgo';
+import modify from 'rollup-plugin-modify';
 import minimist from 'minimist';
 
+const svgo = require('./rollup-plugin-svgo-with-path');
 const svgoOpts = require('./svgo-opts');
 const stripSvg = require('./strip-svg-loader');
 
@@ -17,39 +19,46 @@ const argv = minimist(process.argv.slice(2));
 
 const baseConfig = {
 	input: 'src/entry.js',
-	plugins: [
-		// Optimize svg files
-		svgo(svgoOpts),
-		// Convert optimized svg to json with viewbox/paths
-		(_options => ({ // eslint-disable-line no-unused-vars
-			name: 'stripSVG',
-			transform(code, id) {
-				if (!id.endsWith('.svg')) return null;
-				return {
-					map: { mappings: '' },
-					code: stripSvg(code),
-				};
-			},
-		}))(),
-		// Import svg icons as strings
-		rollupString({
-			include: '**/src/icons/*.svg',
-		}),
-		replace({
-			'process.env.NODE_ENV': JSON.stringify('production'),
-		}),
-		commonjs(),
-		vue({
+	plugins: {
+		preVue: [
+			// Optimize svg files
+			svgo(svgoOpts),
+			// Convert optimized svg to json with viewbox/paths
+			(_options => ({ // eslint-disable-line no-unused-vars
+				name: 'stripSVG',
+				transform(code, id) {
+					if (!id.endsWith('.svg')) return null;
+					return {
+						map: { mappings: '' },
+						code: stripSvg(code),
+					};
+				},
+			}))(),
+			// Import svg icons as strings
+			rollupString({
+				include: '**/src/icons/*.svg',
+			}),
+			replace({
+				'process.env.NODE_ENV': JSON.stringify('production'),
+			}),
+			commonjs(),
+		],
+		vue: {
 			css: true,
-			compileTemplate: true,
 			template: {
 				isProduction: true,
 			},
-		}),
-		requireContext(),
-		resolve(),
-		buble(),
-	],
+		},
+		postVue: [
+			requireContext(),
+			resolve(),
+			modify({
+				find: path.resolve(__dirname, '../src'),
+				replace: '.',
+			}),
+			buble(),
+		],
+	},
 };
 
 // Customize configs for individual targets
@@ -60,43 +69,41 @@ if (!argv.format || argv.format === 'es') {
 		output: {
 			file: 'dist/svg-icon.esm.js',
 			format: 'esm',
-			exports: 'named',
-			banner: '/* eslint-disable */', // Disable eslint in minified prod files
+			banner: '/* eslint-disable */', // Disable eslint in dist files
 		},
 		plugins: [
-			...baseConfig.plugins,
-			terser({
-				output: {
-					ecma: 6,
-					// Keep eslint disable comment at top
-					comments: (node, comment) => (comment.value === ' eslint-disable '),
-				},
-			}),
+			...baseConfig.plugins.preVue,
+			vue(baseConfig.plugins.vue),
+			...baseConfig.plugins.postVue,
 		],
 	};
 	buildFormats.push(esConfig);
 }
 
-if (!argv.format || argv.format === 'umd') {
-	const umdConfig = {
+if (!argv.format || argv.format === 'cjs') {
+	const cjsConfig = {
 		...baseConfig,
 		output: {
 			compact: true,
-			file: 'dist/svg-icon.umd.js',
-			format: 'umd',
+			file: 'dist/svg-icon.ssr.js',
+			format: 'cjs',
+			banner: '/* eslint-disable */', // Disable eslint in dist files
 			name: 'SvgIcon',
 			exports: 'named',
 		},
 		plugins: [
-			...baseConfig.plugins,
-			terser({
-				output: {
-					ecma: 6,
+			...baseConfig.plugins.preVue,
+			vue({
+				...baseConfig.plugins.vue,
+				template: {
+					...baseConfig.plugins.vue.template,
+					optimizeSSR: true,
 				},
 			}),
+			...baseConfig.plugins.postVue,
 		],
 	};
-	buildFormats.push(umdConfig);
+	buildFormats.push(cjsConfig);
 }
 
 if (!argv.format || argv.format === 'iife') {
@@ -110,7 +117,9 @@ if (!argv.format || argv.format === 'iife') {
 			exports: 'named',
 		},
 		plugins: [
-			...baseConfig.plugins,
+			...baseConfig.plugins.preVue,
+			vue(baseConfig.plugins.vue),
+			...baseConfig.plugins.postVue,
 			terser({
 				output: {
 					ecma: 5,

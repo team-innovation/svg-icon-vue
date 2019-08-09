@@ -14,3 +14,11 @@ trim_trailing_whitespace = true
 [{package,package-lock}.json]
 indent_style = space
 indent_size = 2
+
+# Match auto-generated format of eslint config file
+[.eslintrc.js]
+indent_style = space
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false

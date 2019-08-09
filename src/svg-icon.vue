@@ -1,5 +1,4 @@
 <script>
-/* global require */
 import lz from 'lz-string';
 
 // Create context to load all svg icon files - https://webpack.js.org/guides/dependency-management/#require-context
@@ -7,19 +6,25 @@ const requireSVG = require.context('./icons', true, /.*\.svg$/);
 
 // Extract svg contents from svg icon files...
 const icons = {};
-requireSVG.keys().forEach((fileName) => {
-	// Get the svg contents
-	const svg = requireSVG(fileName);
-	const name = fileName.toLowerCase().replace(/^.*\/(.*).svg$/, '$1');
-	const decompressed = lz.decompressFromBase64(svg);
-	if (svg && decompressed) {
-		const svgData = JSON.parse(decompressed);
-		icons[name] = {
-			viewBox: svgData.viewBox,
-			content: svgData.content.replace(/\\"/g, '"'), // Remove escaping from quotes
-		};
-	}
-});
+requireSVG.keys()
+	.forEach((fileName) => {
+		// Get the svg contents
+		const svg = requireSVG(fileName);
+		const name = fileName.toLowerCase()
+			.replace(/^.*\/(.*).svg$/, '$1');
+		// Depending on bundler, requireSVG could return string or module with string as 'default'.
+		// Decompress proper string based on requireSVG return value
+		const decompressed = svg ? lz.decompressFromBase64(svg.default ? svg.default : svg) : null;
+		if (decompressed) {
+			const svgData = JSON.parse(decompressed);
+			icons[name] = {
+				viewBox: svgData.viewBox,
+				content: svgData.content.replace(/\\"/g, '"'), // Remove escaping from quotes
+			};
+		}
+	});
+
+export const iconList = Object.keys(icons).sort();
 
 export default {
 	name: 'SvgIcon', // vue component name

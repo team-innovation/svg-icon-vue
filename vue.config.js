@@ -16,13 +16,15 @@ module.exports = {
 
 		// Exclude icons from standard svg processing
 		config.module.rule('svg')
-			.exclude.add(iconDir)
+			.exclude
+			.add(iconDir)
 			.end();
 
 		// Add new rule to process icons separately
 		config.module.rule('svg-icon')
 			.test(/\**\/.*\.svg/)
-			.include.add(iconDir)
+			.include
+			.add(iconDir)
 			.end()
 
 			// Load these svg files as raw text
