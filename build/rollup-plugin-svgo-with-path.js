@@ -9,7 +9,7 @@ const defaults = {
 
 module.exports = function svg(options) {
 	const svgo = options && options.raw
-		? ({ optimize: x => Promise.resolve({ data: x }) })
+		? ({ optimize: (x) => Promise.resolve({ data: x }) })
 		: new (require('svgo'))(options || defaults);
 
 	return {
@@ -17,7 +17,7 @@ module.exports = function svg(options) {
 		transform: (code, id) => {
 			if (!id.endsWith('.svg')) return null;
 
-			return svgo.optimize(code, { path: id }).then(result => ({
+			return svgo.optimize(code, { path: id }).then((result) => ({
 				map: { mappings: '' },
 				code: 'export default ' + JSON.stringify(result.data),
 			}));

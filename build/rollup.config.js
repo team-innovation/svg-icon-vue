@@ -24,7 +24,7 @@ const baseConfig = {
 			// Optimize svg files
 			svgo(svgoOpts),
 			// Convert optimized svg to json with viewbox/paths
-			(_options => ({ // eslint-disable-line no-unused-vars
+			((_options) => ({ // eslint-disable-line no-unused-vars
 				name: 'stripSVG',
 				transform(code, id) {
 					if (!id.endsWith('.svg')) return null;
