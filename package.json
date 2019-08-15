@@ -26,6 +26,12 @@
     "build:unpkg": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format iife",
     "lint": "eslint \"**/*.{js,vue}\""
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint",
+      "pre-push": "npm audit"
+    }
+  },
   "dependencies": {},
   "devDependencies": {
     "@vue/eslint-config-airbnb": "^4.0.1",
@@ -35,6 +41,7 @@
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-vue": "^5.2.3",
+    "husky": "^3.0.3",
     "lz-string": "^1.4.4",
     "minimist": "^1.2.0",
     "raw-loader": "^3.1.0",
