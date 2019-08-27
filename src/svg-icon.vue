@@ -32,6 +32,10 @@ export default {
 		name: {
 			type: String,
 		},
+		title: {
+			type: [String, Boolean],
+			default: true,
+		},
 		size: {
 			type: [Number, String, Array],
 			default: 32,
@@ -47,6 +51,10 @@ export default {
 		};
 	},
 	computed: {
+		svgTitle() {
+			if (this.title === true) return `${this.name}-icon`;
+			return (typeof this.title === 'string' ? this.title : null);
+		},
 		width() {
 			if (Array.isArray(this.size)) return this.size[0];
 			return this.size;
@@ -80,9 +88,10 @@ export default {
 		class="svg-icon"
 	>
 		<title
+			v-if="!!svgTitle"
 			:id="`${name}-icon`"
 			lang="en"
-		>{{ name }} icon</title>
+		>{{ svgTitle }}</title>
 		<g
 			v-if="icons[name]"
 			:fill="color"

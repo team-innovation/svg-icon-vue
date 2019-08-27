@@ -15,11 +15,13 @@ npm run build
 ```html
 <svg-icon
 	name="icon-name"
+	title="Icon Title"
 	color="#ff8200"
 	size="32"/>
 
 <svg-icon
 	name="custom-icon"
+	title="Custom Title Text"
 	color="#f00"
 	:size="[64, 32]"
 	viewBox="0 0 64 32">
@@ -62,6 +64,7 @@ If name is not provided, or does not match one in the set, it is assumed you are
 
 Additional properties are as follows:
 
+* **title**: A boolean will enable/disable default hover text. A string will set custom hover text.
 * **size**: A single number/string will render a square icon of that size. An array of two numbers/strings of the format [width, height] will display the icon accordingly.
 * **color**: An hex color representation will change the base color of the icon. If a multicolor icon is provided, it will set the color where no other color has been specified.
 
