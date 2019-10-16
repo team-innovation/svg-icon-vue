@@ -6,12 +6,12 @@ import requireContext from 'rollup-plugin-require-context';
 import commonjs from 'rollup-plugin-commonjs';
 import resolve from 'rollup-plugin-node-resolve';
 import replace from 'rollup-plugin-replace';
+import svgo from 'rollup-plugin-svgo';
 import { terser } from 'rollup-plugin-terser';
 import { string as rollupString } from 'rollup-plugin-string';
 import modify from 'rollup-plugin-modify';
 import minimist from 'minimist';
 
-const svgo = require('./rollup-plugin-svgo-with-path');
 const svgoOpts = require('./svgo-opts');
 const stripSvg = require('./strip-svg-loader');
 
