@@ -55,7 +55,7 @@
     "rollup-plugin-string": "^3.0.0",
     "rollup-plugin-svgo": "^1.1.0",
     "rollup-plugin-terser": "^5.1.1",
-    "rollup-plugin-vue": "^5.0.1",
+    "rollup-plugin-vue": "^6.0.0",
     "svgo": "^1.3.0",
     "svgo-loader": "^2.2.1",
     "vue": "^2.6.10",
